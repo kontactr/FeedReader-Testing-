@@ -114,6 +114,28 @@ $(function () {
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
 
+
+         /**
+          *  We always have to call done function in both the Async call function and tests
+          *  Why? :
+          *     1) Async function will put in event queue and starts other execution or waits for it
+          *     2) when the current stack completes its execution
+          *     3) it starts execution in the event queue function
+          *     4) imagine now our function is in the stack
+          *     5) after the completion of the our async function a signal code is passed
+          *     6) which triggers our code where we stopped and starts exec or it will call 
+          *        success or fail method as per defined if our code is not in block mode
+          *     7) after the done signal recived the code starts execute tests 
+          *     8) in tests as per framework doc also require done function to call because
+          *        it waits for some time or we can say that it also put that code in event queue
+          *        so that when we call done from that our code will execute as normal
+          *
+          *
+          *    What i think it is (framework stops regular code put async and test code which has 
+          *    done function in the event queue after completion it starts execution normally) :(
+          */
+
+
         beforeEach(function (done) {
 
 
@@ -148,6 +170,28 @@ $(function () {
 
         let oldFeed;
         let newFeed;
+
+
+        /**
+         *1)  We have to use beforeEach function unless the test will be executed without
+         *    async task completed
+         * 
+         *2)  for the second async task we have to put it in first async task success function
+         *    if we try something like this     
+         *    
+         *    loadFeed(index , done);
+         *    oldData = $(".feed").text();
+         *    loadFeed(index , done);
+         *    newData = $(".feed").text();
+         * 
+         *    then both oldaData and newData contain same data because whenever first loadfunctions'
+         *    done function completes its execution the framework starts the execution of the test cases
+         *    second loadfunction is also called but before its completion of the done function 
+         *    tests will be executed. so we will follow the following approach.   
+         * 
+        */
+
+
 
         beforeEach(function (done) {
 
