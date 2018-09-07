@@ -148,7 +148,7 @@ $(function () {
 
             let container = $(".feed .entry");
 
-            expect(container.length).toBeGreaterThan(1);
+            expect(container.length).toBeGreaterThan(0);
             done();
 
         });
